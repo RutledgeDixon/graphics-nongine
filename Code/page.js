@@ -1,6 +1,6 @@
-// Rutledge Dixon and Abby Everett
-// October 6 2025
-// Multi Object View
+// Rutledge Dixon and Sam Armstrong
+// October 28 2025
+// Textured Objects
 
 var gl;
 var program;
