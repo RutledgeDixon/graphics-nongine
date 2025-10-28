@@ -1,0 +1,112 @@
+# Blender 3.5.1 MTL File: 'Jeff-01.blend'
+# www.blender.org
+
+newmtl MI_1047001_Body
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Body_D.tga
+
+newmtl MI_1047001_Body2
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Body2_D.tga
+
+newmtl MI_1047001_Body3
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Cloth_D.tga
+
+newmtl MI_1047001_EyesHighlight
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Eyes_01_SP.tga
+
+newmtl MI_1047001_EyesHighlight2
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Eyes_02_SP.tga
+
+newmtl MI_1047001_Eyes_Shadow
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_EyeSclera_D.tga
+
+newmtl MI_1047001_Eyesball
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Eyes_D.tga
+
+newmtl MI_1047001_Head
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Head_D.tga
+
+newmtl MI_1047001_Rim_HeroDetails
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Body_D.tga
+
+newmtl MI_1047001_Tooth
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/joshu/Desktop/ModelsResourceDownloads/Jeff Raw Files/T_1047001_Tooth_D.tga
+
+newmtl Material.002
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
