@@ -1,0 +1,15 @@
+{
+  "vShader": "default.vs",
+  "fShader": "default.fs",
+  "mode": "TRIANGLES",
+  "vertices": [
+    -0.1, 0.1, 0,
+    0.1, 0.1, 0,
+    -0.1, -0.1, 0,
+    0.1, -0.1, 0
+  ],
+  "indices": [
+    0, 1, 2,
+    1, 2, 3
+  ]
+}

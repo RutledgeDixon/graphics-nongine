@@ -1,0 +1,87 @@
+<!--
+    File: ArmstrongDixonTO.html
+    Author: Sam Armstrong, Rutledge Dixon
+    Course: COSC4103 - Computer Graphics
+    Assignment: Textured Object
+    Due Date: October 29, 2025
+    
+    Adding texturing to our teams' objects.
+-->
+
+<!DOCTYPE html>
+<html lang="en-us">
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <head>
+        <title>Fun Game!</title>
+        
+        <!-- modules -->
+        <script src="page.js"></script>
+        <script src="models.js"></script>
+        
+        <!-- main -->
+        <script src="ArmstrongDixonTO.js"></script>
+        
+        
+        <style>
+            body {
+				margin: 0;
+				height: 100%;
+				overflow: hidden;  	/* no scrollbars */
+				background-color: black;
+			}
+			canvas {
+				display: block;     
+				margin: 0 auto;     /* center horizontally */
+				background: white;
+			}
+			p{
+				position: absolute; 
+				left: 0; 
+				right: 0; 
+				margin-inline: auto; 
+				width: fit-content;
+				top: -1.5%;
+				
+				color:black;
+				font-weight: bold;
+				font-size:1.5vw;
+				font-family:verdana;
+			}
+            #button1{
+                position: absolute; 
+                left: 0; 
+                right: 0; 
+                margin-inline: auto; 
+                width: fit-content;
+                bottom: 7%;
+                
+                background-color: white;
+                padding: 1.2% 2.5%;
+                text-align: center;
+                
+                border: solid;
+                border-width: 6px;
+                border-color: #5acbff;
+                
+                font-family: verdana;
+                font-weight: bold;
+                color: black;
+                font-size: 28px;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+            #button1:hover{
+                transform: scale(1.1) perspective(1px);
+            }
+        </style>
+    
+    </head>
+    <body>
+        <p id="p_feedback">Hold left-click to move the elements in the scene.</p>
+        <button onclick="toggleAnimation()" id="button1" >Turn animation OFF</button>
+        <canvas id="webgl_canvas" width="900" height="900">
+            Your browser does not support WebGL.
+        </canvas>
+    </body>
+</html>
