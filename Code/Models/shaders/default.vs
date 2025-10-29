@@ -1,7 +1,7 @@
 #version 300 es
 precision mediump float;
 in vec3 aVertexPosition;
-attribute  vec2 vTexCoord;
+in vec2 vTexCoord;
 
 uniform vec3 uTranslate;
 uniform vec3 uScale;
@@ -9,7 +9,8 @@ uniform vec3 uRotate;
 uniform float uTime;
 		
 //texture stuff
-in vec2 fTexCoord;
+//out vec4 fColor;
+out vec2 fTexCoord;
 
 void main(void) {
 	//assign texture varyings
