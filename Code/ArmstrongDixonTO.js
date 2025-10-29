@@ -92,10 +92,6 @@ function draw() {
         // Bind the texture array
         gl.activeTexture(gl.TEXTURE0)
         gl.bindTexture(gl.TEXTURE_2D, model.texture);
-        /*if (program.uTexture) {
-            //console.log(program.uTexture);
-            gl.sampler2D(program.uTexture,0);
-        }*/
 		
         // Draw the model
         gl.drawElements(model.mode, model.indices.length, gl.UNSIGNED_SHORT, 0);
@@ -123,7 +119,7 @@ function render() {
 // Set web page, load objects, start rendering
 async function init() {
     // Get canvas
-    canvas = document.getElementById( "webgl_canvas" );
+    canvas = document.getElementById("webgl_canvas");
 
     canvas.width = window.innerHeight;
     canvas.height = window.innerHeight;
@@ -138,6 +134,9 @@ async function init() {
     // Set canvas clear color & height:
     gl.clearColor(0.3, 0.3, 0.3, 1.0);
     gl.viewport( 0, 0, canvas.width, canvas.height );
+
+    //Flip textures' y axis
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
     console.log("Canvas size:", canvas.width, canvas.height);
 
@@ -231,18 +230,13 @@ function main() {
         time is the time since the start of the program
     */
 	
-    let f_scaleModify = 1 + Math.sin(time) / 1.5;
 	for (var o of objects) {
-		//o.tint[0] = Math.abs(Math.cos(time/10.0));
-		//o.tint[1] = Math.abs(Math.cos(time/9.0 + 10));
-		//o.tint[2] = Math.abs(Math.cos(time/8.0 + 20));
-        o.tint = [1,1,1];
-        //As time goes by, the scale of the models smoothly grows, then shrinks, then grows again in a cycle.
+		o.tint[0] = Math.abs(Math.cos(time/10.0));
+		o.tint[1] = Math.abs(Math.cos(time/9.0 + 10));
+		o.tint[2] = Math.abs(Math.cos(time/8.0 + 20));
         o.scale = [0.2,0.2,0.2];
-        //o.scale = [1,1,1];
         if (o.model.loaded && b_animate) {
-            //o.scale = [f_scaleModify, f_scaleModify, f_scaleModify];
-            //o.rotate = [0.0, time, time*2];
+
         }
 	}
 }

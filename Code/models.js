@@ -127,40 +127,31 @@ function loadTrianglesOBJ (model, file) {
         model.vertices.push(parseFloat(i.groups.y));
         model.vertices.push(parseFloat(i.groups.z));
     }
-    model.indices = [];
-    for (const i of file.matchAll(fRegex)) {
-        console.log(i.groups);
-        // Faces are 1 indexed
-        model.indices.push(parseInt(i.groups.a)-1);
-        model.indices.push(parseInt(i.groups.b)-1);
-        model.indices.push(parseInt(i.groups.c)-1);
+    
+    var texCoords = [];
+    for (const i of file.matchAll(tRegex)) {
+        texCoords.push([parseFloat(i.groups.s), parseFloat(i.groups.t)]);
     }
 
+    model.indices = [];
     model.texCoords = [];
-    for (const i of file.matchAll(tRegex)) {
-        model.texCoords.push(parseFloat(i.groups.s));
-        model.texCoords.push(parseFloat(i.groups.t));
+    console.log(texCoords);
+    var temp = 0;
+    for (const i of file.matchAll(fRegex)) {
+        // Faces are 1 indexed
+        model.indices.push(parseInt(i.groups.a1)-1);
+        model.indices.push(parseInt(i.groups.b1)-1);
+        model.indices.push(parseInt(i.groups.c1)-1);
+
+        for (const j of texCoords[parseInt(i.groups.a2)-1]) { model.texCoords.push(j); console.log(i.groups.a2, j); }
+        for (const j of texCoords[parseInt(i.groups.b2)-1]) { model.texCoords.push(j); console.log(i.groups.b2, j); }
+        for (const j of texCoords[parseInt(i.groups.c2)-1]) { model.texCoords.push(j); console.log(i.groups.c2, j); }
+        if (temp > 6) break;
+        temp += 1;
     }
+    console.log(model.texCoords);
     model.mode = gl.TRIANGLES;
 }
-
-/* Obsolete
-// Return shader file names
-function getShadersOBJ(file) {
-    let vShaderFile = vShaderRegex.exec(file);
-    if (vShaderFile != null) {
-        vShaderFile = vShaderFile[1];
-    } else {
-        vShaderFile = "default.vs";
-    }
-    let fShaderFile = fShaderRegex.exec(file);
-    if (fShaderFile != null) {
-        fShaderFile = fShaderFile[1];
-    } else {
-        fShaderFile = "default.fs";
-    }
-    return [vShaderFile, fShaderFile];
-}*/
 
 // 
 function loadTrianglesJSON(model, modelInfo) {
@@ -247,35 +238,29 @@ class Model {
         this.loaded = false;
         loadTXT(filename).then((file) => {
             let [objectFile, textureFile, vShaderFile, fShaderFile] = parseModelFile(file);
-            console.log(objectFile, textureFile, vShaderFile, fShaderFile);
 
+
+            // Create a new nexture for this model
+            this.texture = this.gl.createTexture();
             
+            var image = new Image();
+            image.src = textureFile;
+
+            image.onload = () => {
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+                this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.MIRRORED_REPEAT);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.MIRRORED_REPEAT);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+            };
 
             // Load from OBJ file, set loaded when done
             if (/.+\.obj$/.test(objectFile)) {
                 loadTXT(objectFile).then((file) => {
                     loadTrianglesOBJ(this, file);
 
-
-                    console.log(this.texCoords);
-                    // Create a new nexture for this model
-                    this.texture = this.gl.createTexture();
-                    this.gl.activeTexture(this.gl.TEXTURE0 + 0);
-                    this.gl.bindTexture(gl.TEXTURE_2D, this.texture);
-                    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array([0,0,255,255]));
-                    
-                    var image = new Image();
-                    image.src = textureFile;
-
-                    image.onload = () => {
-                        this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-                        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
-                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
-                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
-                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.MIRRORED_REPEAT);
-                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.MIRRORED_REPEAT);
-                        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-                    };
                     // Set the shader
                     loadShaders(this, vShaderFile, fShaderFile);
                 });
@@ -283,25 +268,6 @@ class Model {
             } else if (/.+\.json$/.test(objectFile)) {
                 loadJSON(objectFile).then((modelInfo) => {
                     loadTrianglesJSON(this, modelInfo);
-
-                    // Create a new nexture for this model
-                    this.texture = this.gl.createTexture();
-                    this.gl.activeTexture(this.gl.TEXTURE0 + 0);
-                    this.gl.bindTexture(gl.TEXTURE_2D, this.texture);
-                    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array([0,0,255,255]));
-                    
-                    var image = new Image();
-                    image.src = textureFile;
-
-                    image.onload = () => {
-                        this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-                        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
-                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
-                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
-                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.MIRRORED_REPEAT);
-                        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.MIRRORED_REPEAT);
-                        this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-                    };
 
                     loadShaders(this, vShaderFile, fShaderFile);
                 });

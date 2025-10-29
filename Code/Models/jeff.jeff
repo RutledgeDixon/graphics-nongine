@@ -1,4 +1,5 @@
-object Models/CG.obj
-texture Models/xor.jpeg
+object Models/cube2.obj
+t/exture Models/Gamma_correction_test_picture.png
+texture xor.jpeg
 v/Shader default.vs
 f/Shader default.fs

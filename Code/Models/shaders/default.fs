@@ -8,9 +8,6 @@ in vec2 vTexCoord;
 
 uniform sampler2D uTexture;
 
-void main(void) {
-	//fragColor = vec4(uTint, 1.0);
-	//fragColor = texture(uTexture, fTexCoord) * fColor * vec4(uTint, 1.0);
-	
-	fragColor = texture(uTexture, vTexCoord);
+void main(void) {	
+	fragColor = texture(uTexture, vTexCoord) * vec4(uTint, 1.0);;
 }
