@@ -4,7 +4,7 @@
 const shaderLocation = "Models/shaders/";
 
 const vRegex = /v (?<x>-?\d*.\d*) (?<y>-?\d*.\d*) (?<z>-?\d*.\d*)/g;
-const fRegex = /f (?<a>\d+.*) (?<b>\d+.*) (?<c>\d+.*)/g;
+const fRegex = /f (?<a1>\d+)\/(?<a2>\d+)\/(?<a3>\d+) (?<b1>\d+)\/(?<b2>\d+)\/(?<b3>\d+) (?<c1>\d+)\/(?<c2>\d+)\/(?<c3>\d+)/g;
 const tRegex = /vt (?<s>\d+.*) (?<t>\d+.*)/g;
 const vShaderRegex = /vs (?<vShader>[^\s]+.*[^\s]+)\s*/g;
 const fShaderRegex = /fs (?<fShader>[^\s]+.*[^\s]+)\s*/g;
@@ -129,6 +129,7 @@ function loadTrianglesOBJ (model, file) {
     }
     model.indices = [];
     for (const i of file.matchAll(fRegex)) {
+        console.log(i.groups);
         // Faces are 1 indexed
         model.indices.push(parseInt(i.groups.a)-1);
         model.indices.push(parseInt(i.groups.b)-1);
