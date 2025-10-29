@@ -127,6 +127,7 @@ function loadTrianglesOBJ (model, file) {
     model.mode = gl.TRIANGLES;
 }
 
+/* Obsolete
 // Return shader file names
 function getShadersOBJ(file) {
     let vShaderFile = vShaderRegex.exec(file);
@@ -142,7 +143,7 @@ function getShadersOBJ(file) {
         fShaderFile = "default.fs";
     }
     return [vShaderFile, fShaderFile];
-}
+}*/
 
 // 
 function loadTrianglesJSON(model, modelInfo) {
@@ -189,6 +190,34 @@ function loadTrianglesJSON(model, modelInfo) {
     }
 }
 
+function parseModelFile (this, file) {
+    var objectFile = /object (.*\.(json|obj))/.exec(file);
+    if (objectFile != null) {
+        objectFile = objectFile[1];
+    } else {
+        objectFile = "default.obj"
+    }
+    var textureFile = /texture (.*\.(png|jpg))/.exec(file);
+    if (textureFile != null) {
+        textureFile = objectFile[1];
+    } else {
+        textureFile = "default.png"
+    }
+    var vShaderFile = /vShader (.*\.vs)/.exec(file);
+    if (vShaderFile != null) {
+        vShaderFile = objectFile[1];
+    } else {
+        vShaderFile = "default.vs"
+    }
+    var fShaderFile = /fShader (.*\.fs)/.exec(file);
+    if (fShaderFile != null) {
+        fShaderFile = objectFile[1];
+    } else {
+        fShaderFile = "default.fs"
+    }
+}
+
+
 // Model with all properties requried to render separately from other models
 class Model {
 	width = 0.0;
@@ -197,21 +226,41 @@ class Model {
         // Link to GL context
         this.gl = gl;
         this.loaded = false;
-        // Load from OBJ file, set loaded when done
-        if (/.+\.obj$/.test(fileName)) {
-            loadTXT(fileName).then((file) => {
-                loadTrianglesOBJ(this, file);
-                let [vShaderFile, fShaderFile] = getShadersOBJ(file);
-                // Set the shader
-                loadShaders(this, vShaderFile, fShaderFile);
-            });
-        // Load from JSON file
-        } else if (/.+\.json$/.test(fileName)) {
-            loadJSON(fileName).then((modelInfo) => {
-                loadTrianglesJSON(this, modelInfo);
-                loadShaders(this, modelInfo.vShader, modelInfo.fShader);
-            });
-        }
+
+        loadTXT(filename).then((file) => {
+            let [objectFile, textureFile, vShaderFile, fShaderFile] = parseModelFile(this, file);
+
+            // Create a new nexture for this model
+            this.texture = this.gl.createTexture();
+
+            var image = new Image();
+            image.src = textureFile;
+
+            image.onload = () => {
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                gl.bindTexture(gl.TEXTURE_2D, null);
+            };
+
+            // Load from OBJ file, set loaded when done
+            if (/.+\.obj$/.test(objectFile)) {
+                loadTXT(fileName).then((file) => {
+                    loadTrianglesOBJ(this, file);
+                    // Set the shader
+                    loadShaders(this, vShaderFile, fShaderFile);
+                });
+            // Load from JSON file
+            } else if (/.+\.json$/.test(objectFile)) {
+                loadJSON(fileName).then((modelInfo) => {
+                    loadTrianglesJSON(this, modelInfo);
+                    loadShaders(this, modelInfo.vShader, modelInfo.fShader);
+                });
+            }
+        })
+
+        
     }
 }
 

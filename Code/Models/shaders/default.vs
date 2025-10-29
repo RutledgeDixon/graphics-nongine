@@ -18,7 +18,5 @@ void main(void) {
 	newPosition *= uRotX * uRotY * uRotZ;
 	newPosition += uTranslate;
 	
-	
-	
 	gl_Position = vec4(newPosition , 1.0);
 }
