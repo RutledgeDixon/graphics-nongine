@@ -1,6 +1,6 @@
 // Takes gl and a list of images
 // Configures the textures from the images
-export function configureTexture(gl, images) {
+function configureTexture(gl, images) {
     let textures = [];
     images.forEach((image) => {
         let texture = gl.createTexture();       
@@ -16,20 +16,6 @@ export function configureTexture(gl, images) {
     });
 
     return textures;
-}
-
-function configureTexture( image ) {
-    texture = gl.createTexture();
-    gl.bindTexture( gl.TEXTURE_2D, texture );
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, 
-         gl.RGB, gl.UNSIGNED_BYTE, image );
-    gl.generateMipmap( gl.TEXTURE_2D );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
-                      gl.NEAREST_MIPMAP_LINEAR );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-    
-    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 }
 
 // Takes in vertices ([[]]) and indices ([])e

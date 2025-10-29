@@ -9,9 +9,6 @@
  */
 
 'use strict';
-import { 
-    configureTextures, 
-} from '/graphics-functions.js';
 
 // List of all objects' associated json files
 var jsons = ["Models/Jeff.obj", "Models/monkey.obj", "Models/CG.obj"];
