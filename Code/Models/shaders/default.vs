@@ -9,13 +9,11 @@ uniform vec3 uRotate;
 uniform float uTime;
 		
 //texture stuff
-//varying vec4 fColor;
-varying vec2 fTexCoord;
+in vec2 fTexCoord;
 
 void main(void) {
 	//assign texture varyings
-	//fColor = vColor;
-    fTexCoord = vTexCoord;
+    	fTexCoord = vTexCoord;
 
 	vec3 newPosition = (aVertexPosition);
 	newPosition *= uScale;

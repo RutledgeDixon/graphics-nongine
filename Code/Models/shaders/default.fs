@@ -3,8 +3,7 @@ precision mediump float;
 out vec4 fragColor;
 uniform vec3 uTint;
 
-//varying vec4 fColor;
-varying  vec2 fTexCoord;
+in  vec2 fTexCoord;
 
 uniform sampler2D texture;
 
