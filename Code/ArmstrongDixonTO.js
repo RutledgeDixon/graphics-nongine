@@ -25,7 +25,6 @@ let canvas,
     f_mouseX,
     f_mouseY;
 
-var texSize = 256;
 var b_mouseDragging = false;
 var a_startMouse = [0.0, 0.0];
 var a_startTranslate = [];
@@ -67,8 +66,9 @@ function draw() {
         gl.useProgram(program);
 		
         // Configure texture
-        //configureTextures(gl, texSize, IMAGE_GOES_HERE)
+        //configureTextures(gl, i.textureImage);
 
+        // Set uniforms
         if (program.uTime) {
             gl.uniform1f(program.uTime, time);
         }
@@ -91,12 +91,15 @@ function draw() {
 
         // Bind the vertex array
         gl.bindVertexArray(model.vao);
+        // Bind the texture array
+        gl.bindTexture(gl.TEXTURE_2D, model.texture);
 		
         // Draw the model
         gl.drawElements(model.mode, model.indices.length, gl.UNSIGNED_SHORT, 0);
 		
         // Clear the gl location for the vertex array
         gl.bindVertexArray(null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
     }
 }
 
