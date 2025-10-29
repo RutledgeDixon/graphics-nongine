@@ -131,17 +131,21 @@ function loadTrianglesOBJ (model, file) {
         model.vertices.push(parseFloat(i.groups.z));
     }
 
-    // Parse texture coordinates
-    let textureCoordinates = [];
+    // Parse texture coordinates from file
+    let objTextureCoords = [];
     for (const i of file.matchAll(tRegex)) {
-        textureCoordinates.push(parseFloat(i.groups.s));
-        textureCoordinates.push(parseFloat(i.groups.t));
+        objTextureCoords.push(parseFloat(i.groups.s));
+        objTextureCoords.push(parseFloat(i.groups.t));
     }
 
-    // Parse faces and build indices and texture coordinate arrays
+    // Initialize arrays
     model.indices = [];
-    model.texCoords = [];
+    let vertexCount = model.vertices.length / 3;
     
+    // Create texture coordinate array that matches vertex array size
+    model.texCoords = new Array(vertexCount * 2).fill(0.0);
+    
+    // Parse faces and build proper texture coordinate mapping
     for (const i of file.matchAll(fRegex)) {
         // Parse face format: vertex/texture/normal
         let aParts = i.groups.a.split('/');
@@ -149,26 +153,27 @@ function loadTrianglesOBJ (model, file) {
         let cParts = i.groups.c.split('/');
         
         // Vertex indices (1-indexed in OBJ, convert to 0-indexed)
-        model.indices.push(parseInt(aParts[0]) - 1);
-        model.indices.push(parseInt(bParts[0]) - 1);
-        model.indices.push(parseInt(cParts[0]) - 1);
+        let aVertIndex = parseInt(aParts[0]) - 1;
+        let bVertIndex = parseInt(bParts[0]) - 1;
+        let cVertIndex = parseInt(cParts[0]) - 1;
         
-        // Texture coordinate indices (if they exist)
-        if (aParts.length > 1 && aParts[1] !== '' && textureCoordinates.length > 0) {
-            let aTexIndex = parseInt(aParts[1]) - 1; // 1-indexed in OBJ
+        model.indices.push(aVertIndex);
+        model.indices.push(bVertIndex);
+        model.indices.push(cVertIndex);
+        
+        // Map texture coordinates to vertices
+        if (aParts.length > 1 && aParts[1] !== '' && objTextureCoords.length > 0) {
+            let aTexIndex = parseInt(aParts[1]) - 1;
             let bTexIndex = parseInt(bParts[1]) - 1;
             let cTexIndex = parseInt(cParts[1]) - 1;
             
-            // Add texture coordinates for this triangle
-            model.texCoords.push(textureCoordinates[aTexIndex * 2]);     // s coordinate
-            model.texCoords.push(textureCoordinates[aTexIndex * 2 + 1]); // t coordinate
-            model.texCoords.push(textureCoordinates[bTexIndex * 2]);
-            model.texCoords.push(textureCoordinates[bTexIndex * 2 + 1]);
-            model.texCoords.push(textureCoordinates[cTexIndex * 2]);
-            model.texCoords.push(textureCoordinates[cTexIndex * 2 + 1]);
-        } else {
-            // Default texture coordinates if none specified
-            model.texCoords.push(0.0, 0.0, 1.0, 0.0, 0.5, 1.0);
+            // Assign texture coordinates to the correct vertex positions
+            model.texCoords[aVertIndex * 2] = objTextureCoords[aTexIndex * 2];
+            model.texCoords[aVertIndex * 2 + 1] = objTextureCoords[aTexIndex * 2 + 1];
+            model.texCoords[bVertIndex * 2] = objTextureCoords[bTexIndex * 2];
+            model.texCoords[bVertIndex * 2 + 1] = objTextureCoords[bTexIndex * 2 + 1];
+            model.texCoords[cVertIndex * 2] = objTextureCoords[cTexIndex * 2];
+            model.texCoords[cVertIndex * 2 + 1] = objTextureCoords[cTexIndex * 2 + 1];
         }
     }
 
@@ -292,8 +297,8 @@ class Model {
                 this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
                 this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
                 this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
-                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.MIRRORED_REPEAT);
-                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.MIRRORED_REPEAT);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.REPEAT);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.REPEAT);
                 this.gl.bindTexture(this.gl.TEXTURE_2D, null);
             };
 

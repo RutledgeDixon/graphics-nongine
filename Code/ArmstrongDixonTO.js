@@ -244,7 +244,7 @@ function main() {
         //o.scale = [1,1,1];
         if (o.model.loaded && b_animate) {
             //o.scale = [f_scaleModify, f_scaleModify, f_scaleModify];
-            o.rotate = [0.0, time, time*2];
+            o.rotate = [time/4, time, time*2/3];
         }
 	}
 }
