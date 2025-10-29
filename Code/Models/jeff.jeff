@@ -1,4 +1,4 @@
 object Models/CG.obj
-texture Models/Gamma_correction_test_picture.png
+texture Models/xor.jpeg
 v/Shader default.vs
 f/Shader default.fs

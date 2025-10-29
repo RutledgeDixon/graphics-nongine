@@ -50,6 +50,7 @@ function draw() {
     // Reset viewport size/color
     gl.clear(gl.COLOR_BUFFER_BIT, gl.DEPTH_BUFFER_BIT);
     //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.enable(gl.DEPTH_TEST)
 
     // Render all objects
     for(var i of objects) {
@@ -89,11 +90,12 @@ function draw() {
         // Bind the vertex array
         gl.bindVertexArray(model.vao);
         // Bind the texture array
+        gl.activeTexture(gl.TEXTURE0)
         gl.bindTexture(gl.TEXTURE_2D, model.texture);
-        if (program.uTexture) {
+        /*if (program.uTexture) {
             //console.log(program.uTexture);
             gl.sampler2D(program.uTexture,0);
-        }
+        }*/
 		
         // Draw the model
         gl.drawElements(model.mode, model.indices.length, gl.UNSIGNED_SHORT, 0);
@@ -199,8 +201,8 @@ async function init() {
                 const dy = f_mouseY - a_startMouse[1];
 
                 //Apply offset relative to the original position
-                o.translate[0] = a_startTranslate[int_i] + dx;
-                o.translate[1] = a_startTranslate[int_i + 1] + dy;
+                o.rotate[1] = a_startTranslate[int_i] + 3*dx;
+                o.rotate[0] = a_startTranslate[int_i + 1] - 3*dy;
 
                 int_i += 2;
             }
@@ -240,7 +242,7 @@ function main() {
         //o.scale = [1,1,1];
         if (o.model.loaded && b_animate) {
             //o.scale = [f_scaleModify, f_scaleModify, f_scaleModify];
-            o.rotate = [0.0, time, time*2];
+            //o.rotate = [0.0, time, time*2];
         }
 	}
 }
