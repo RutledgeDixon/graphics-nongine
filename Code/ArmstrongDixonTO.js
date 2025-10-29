@@ -48,7 +48,7 @@ function toggleAnimation(){
 // Draw all loaded models
 function draw() {
     // Reset viewport size/color
-    gl.clear(gl.COLOR_BUFFER_BIT, gl.DEPTH_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     // Render all objects
@@ -92,7 +92,7 @@ function draw() {
         gl.bindTexture(gl.TEXTURE_2D, model.texture);
         if (program.uTexture) {
             //console.log(program.uTexture);
-            gl.sampler2D(program.uTexture,0);
+            gl.uniform1i(program.uTexture, 0);
         }
 		
         // Draw the model
@@ -136,6 +136,9 @@ async function init() {
     // Set canvas clear color & height:
     gl.clearColor(0.3, 0.3, 0.3, 1.0);
     gl.viewport( 0, 0, canvas.width, canvas.height );
+    
+    // Enable depth testing for proper 3D rendering
+    gl.enable(gl.DEPTH_TEST);
 
     console.log("Canvas size:", canvas.width, canvas.height);
 
@@ -234,9 +237,10 @@ function main() {
 		//o.tint[0] = Math.abs(Math.cos(time/10.0));
 		//o.tint[1] = Math.abs(Math.cos(time/9.0 + 10));
 		//o.tint[2] = Math.abs(Math.cos(time/8.0 + 20));
+        var scale = 0.5;
         o.tint = [1,1,1];
         //As time goes by, the scale of the models smoothly grows, then shrinks, then grows again in a cycle.
-        o.scale = [0.2,0.2,0.2];
+        o.scale = [scale, scale, scale];
         //o.scale = [1,1,1];
         if (o.model.loaded && b_animate) {
             //o.scale = [f_scaleModify, f_scaleModify, f_scaleModify];

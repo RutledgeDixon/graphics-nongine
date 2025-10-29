@@ -79,7 +79,7 @@ function setShaders(model, fShaderSource) {
     
     // Send vertex point array to aVertexPosition attributes
     model.gl.enableVertexAttribArray(model.program.aVertexPosition);
-    model.gl.vertexAttribPointer(model.program.aVertexPointer, 3, model.gl.FLOAT, false, 0, 0);
+    model.gl.vertexAttribPointer(model.program.aVertexPosition, 3, model.gl.FLOAT, false, 0, 0);
     
     // Create set and assign to index buffer
     model.indexBuffer = model.gl.createBuffer();
@@ -123,24 +123,53 @@ function loadShaders (model, vShaderFile, fShaderFile) {
 
 // Load vertices and indices from OBJ file
 function loadTrianglesOBJ (model, file) {
+    // Parse vertices
     model.vertices = [];
     for (const i of file.matchAll(vRegex)) {
         model.vertices.push(parseFloat(i.groups.x));
         model.vertices.push(parseFloat(i.groups.y));
         model.vertices.push(parseFloat(i.groups.z));
     }
-    model.indices = [];
-    for (const i of file.matchAll(fRegex)) {
-        // Faces are 1 indexed
-        model.indices.push(parseInt(i.groups.a)-1);
-        model.indices.push(parseInt(i.groups.b)-1);
-        model.indices.push(parseInt(i.groups.c)-1);
+
+    // Parse texture coordinates
+    let textureCoordinates = [];
+    for (const i of file.matchAll(tRegex)) {
+        textureCoordinates.push(parseFloat(i.groups.s));
+        textureCoordinates.push(parseFloat(i.groups.t));
     }
 
+    // Parse faces and build indices and texture coordinate arrays
+    model.indices = [];
     model.texCoords = [];
-    for (const i of file.matchAll(tRegex)) {
-        model.texCoords.push(parseInt(i.groups.s));
-        model.texCoords.push(parseInt(i.groups.t));
+    
+    for (const i of file.matchAll(fRegex)) {
+        // Parse face format: vertex/texture/normal
+        let aParts = i.groups.a.split('/');
+        let bParts = i.groups.b.split('/');
+        let cParts = i.groups.c.split('/');
+        
+        // Vertex indices (1-indexed in OBJ, convert to 0-indexed)
+        model.indices.push(parseInt(aParts[0]) - 1);
+        model.indices.push(parseInt(bParts[0]) - 1);
+        model.indices.push(parseInt(cParts[0]) - 1);
+        
+        // Texture coordinate indices (if they exist)
+        if (aParts.length > 1 && aParts[1] !== '' && textureCoordinates.length > 0) {
+            let aTexIndex = parseInt(aParts[1]) - 1; // 1-indexed in OBJ
+            let bTexIndex = parseInt(bParts[1]) - 1;
+            let cTexIndex = parseInt(cParts[1]) - 1;
+            
+            // Add texture coordinates for this triangle
+            model.texCoords.push(textureCoordinates[aTexIndex * 2]);     // s coordinate
+            model.texCoords.push(textureCoordinates[aTexIndex * 2 + 1]); // t coordinate
+            model.texCoords.push(textureCoordinates[bTexIndex * 2]);
+            model.texCoords.push(textureCoordinates[bTexIndex * 2 + 1]);
+            model.texCoords.push(textureCoordinates[cTexIndex * 2]);
+            model.texCoords.push(textureCoordinates[cTexIndex * 2 + 1]);
+        } else {
+            // Default texture coordinates if none specified
+            model.texCoords.push(0.0, 0.0, 1.0, 0.0, 0.5, 1.0);
+        }
     }
 
     model.mode = gl.TRIANGLES;
