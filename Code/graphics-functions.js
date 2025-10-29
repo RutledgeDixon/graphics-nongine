@@ -1,24 +1,35 @@
-//returns two textures configured and ready to use
-export function configureTexture(gl) {
-    let texture1 = gl.createTexture();       
-    gl.bindTexture( gl.TEXTURE_2D, texture1 );
+// Takes gl and a list of images
+// Configures the textures from the images
+export function configureTexture(gl, images) {
+    let textures = [];
+    images.forEach((image) => {
+        let texture = gl.createTexture();       
+        gl.bindTexture( gl.TEXTURE_2D, texture );
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+        gl.generateMipmap( gl.TEXTURE_2D );
+        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
+                        gl.NEAREST_MIPMAP_LINEAR );
+        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+        textures.push(texture);
+    });
+
+    return textures;
+}
+
+function configureTexture( image ) {
+    texture = gl.createTexture();
+    gl.bindTexture( gl.TEXTURE_2D, texture );
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texSize, texSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, image1);
+    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, 
+         gl.RGB, gl.UNSIGNED_BYTE, image );
     gl.generateMipmap( gl.TEXTURE_2D );
     gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
                       gl.NEAREST_MIPMAP_LINEAR );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-    let texture2 = gl.createTexture();
-    gl.bindTexture( gl.TEXTURE_2D, texture2 );
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texSize, texSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, image2);
-    gl.generateMipmap( gl.TEXTURE_2D );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
-                      gl.NEAREST_MIPMAP_LINEAR );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-    return [texture1, texture2];
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+    
+    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 }
 
 // Takes in vertices ([[]]) and indices ([])e
@@ -79,4 +90,79 @@ export function calculateNormals(vertices, indices) {
     }
     
     return normals;
+}
+
+//take an array of 3d vertices, scale (a float), rotate (degrees, axis), and translate (length, axis)
+//scales them, rotates them, translates them, etc. using matrix multiplication
+//returns a transformation matrix
+export function calculateTransformationMatrix(gl, scale, rotate, translate) {
+    var radians = {
+        x: rotate.x ? rotate.degrees.x * Math.PI / 180.0 : null,
+        y: rotate.y ? rotate.degrees.y * Math.PI / 180.0 : null,
+        z: rotate.z ? rotate.degrees.z * Math.PI / 180.0 : null
+    };
+    var cosTheta = {
+        x: radians.x ? Math.cos(radians.x) : 1,
+        y: radians.y ? Math.cos(radians.y) : 1,
+        z: radians.z ? Math.cos(radians.z) : 1
+    };
+    var sinTheta = {
+        x: radians.x ? Math.sin(radians.x) : 0,
+        y: radians.y ? Math.sin(radians.y) : 0,
+        z: radians.z ? Math.sin(radians.z) : 0
+    };
+
+    var rotateZMatrix = [
+        cosTheta.z, -sinTheta.z, 0, 0,
+        sinTheta.z, cosTheta.z, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ];
+    var rotateYMatrix = [
+        cosTheta.y, 0, sinTheta.y, 0,
+        0, 1, 0, 0,
+        -sinTheta.y, 0, cosTheta.y, 0,
+        0, 0, 0, 1
+    ];
+    var rotateXMatrix = [
+        1, 0, 0, 0,
+        0, cosTheta.x, -sinTheta.x, 0,
+        0, sinTheta.x, cosTheta.x, 0,
+        0, 0, 0, 1
+    ];
+    var scaleMatrix = [
+        scale, 0, 0, 0,
+        0, scale, 0, 0,
+        0, 0, scale, 0,
+        0, 0, 0, 1
+    ];
+    /*EXAMPLE TRANSFORMATION MATRICES
+    rotating about z axis
+    [ cosθ  -sinθ   0   0 ]
+    [ sinθ   cosθ   0   0 ]
+    [ 0      0      1   0 ]
+    [ 0      0      0   1 ]
+
+    rotating about y axis
+    [ cosθ   0   sinθ   0 ]
+    [ 0      1    0     0 ]
+    [ -sinθ  0   cosθ   0 ]
+    [ 0      0    0     1 ]
+
+    rotating about x axis
+    [ 1      0      0     0 ]
+    [ 0    cosθ   -sinθ   0 ]
+    [ 0    sinθ    cosθ   0 ]
+    [ 0      0      0     1 ]
+    */
+
+    //pass the matrices to the vertex shader
+    const rZ = gl.getUniformLocation(program, "u_rotateZMatrix");
+    const rY = gl.getUniformLocation(program, "u_rotateYMatrix");
+    const rX = gl.getUniformLocation(program, "u_rotateXMatrix");
+    const sM = gl.getUniformLocation(program, "u_scaleMatrix");
+    gl.uniformMatrix4fv(rZ, false, flatten(rotateZMatrix));
+    gl.uniformMatrix4fv(rY, false, flatten(rotateYMatrix));
+    gl.uniformMatrix4fv(rX, false, flatten(rotateXMatrix));
+    gl.uniformMatrix4fv(sM, false, flatten(scaleMatrix));
 }

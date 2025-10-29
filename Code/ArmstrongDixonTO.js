@@ -9,6 +9,9 @@
  */
 
 'use strict';
+import { 
+    configureTextures, 
+} from '/graphics-functions.js';
 
 // List of all objects' associated json files
 var jsons = ["Models/Jeff.obj", "Models/monkey.obj", "Models/CG.obj"];
@@ -62,6 +65,10 @@ function draw() {
         // Set this model's program (shaders) for use
         gl.useProgram(program);
 		
+        // Configure texture
+        //configureTextures(gl, i.textureImage);
+
+        // Set uniforms
         if (program.uTime) {
             gl.uniform1f(program.uTime, time);
         }
@@ -84,12 +91,15 @@ function draw() {
 
         // Bind the vertex array
         gl.bindVertexArray(model.vao);
+        // Bind the texture array
+        gl.bindTexture(gl.TEXTURE_2D, model.texture);
 		
         // Draw the model
         gl.drawElements(model.mode, model.indices.length, gl.UNSIGNED_SHORT, 0);
 		
         // Clear the gl location for the vertex array
         gl.bindVertexArray(null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
     }
 }
 
