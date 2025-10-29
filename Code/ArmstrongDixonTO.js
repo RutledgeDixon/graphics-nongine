@@ -9,6 +9,10 @@
  */
 
 'use strict';
+import { 
+    configureTextures, 
+    calculateTransformationMatrix 
+} from '/graphics-functions.js';
 
 // List of all objects' associated json files
 var jsons = ["Models/Jeff.obj", "Models/monkey.obj", "Models/CG.obj"];
