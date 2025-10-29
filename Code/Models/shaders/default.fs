@@ -6,10 +6,11 @@ uniform vec3 uTint;
 //in vec4 fColor;
 in vec2 fTexCoord;
 
-uniform sampler2D texture;
+uniform sampler2D uTexture;
 
 void main(void) {
 	//fragColor = vec4(uTint, 1.0);
-	//fragColor = texture(texture, fTexCoord) * fColor * vec4(uTint, 1.0);
-	fragColor = texture(texture, fTexCoord) * vec4(uTint, 1.0);
+	//fragColor = texture(uTexture, fTexCoord) * fColor * vec4(uTint, 1.0);
+	
+	fragColor = texture(uTexture, fTexCoord);
 }

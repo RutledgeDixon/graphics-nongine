@@ -5,6 +5,7 @@ const shaderLocation = "Models/shaders/";
 
 const vRegex = /v (?<x>-?\d*.\d*) (?<y>-?\d*.\d*) (?<z>-?\d*.\d*)/g;
 const fRegex = /f (?<a>\d+.*) (?<b>\d+.*) (?<c>\d+.*)/g;
+const tRegex = /vt (?<s>\d+.*) (?<t>\d+.*)/g;
 const vShaderRegex = /vs (?<vShader>[^\s]+.*[^\s]+)\s*/g;
 const fShaderRegex = /fs (?<fShader>[^\s]+.*[^\s]+)\s*/g;
 
@@ -60,6 +61,8 @@ function setShaders(model, fShaderSource) {
     model.program.uScale = gl.getUniformLocation(model.program, "uScale");
     model.program.uRotate = gl.getUniformLocation(model.program, "uRotate");
     model.program.uTint = gl.getUniformLocation(model.program, "uTint");
+    model.program.uTexture = gl.getUniformLocation(model.program, "uTexture");
+    model.uTexture = gl.getUniformLocation(model.program, "uTexture");
 
     // Create buffers
     
@@ -133,7 +136,12 @@ function loadTrianglesOBJ (model, file) {
         model.indices.push(parseInt(i.groups.b)-1);
         model.indices.push(parseInt(i.groups.c)-1);
     }
+
     model.texCoords = [];
+    for (const i of file.matchAll(tRegex)) {
+        model.texCoords.push(parseInt(i.groups.s));
+        model.texCoords.push(parseInt(i.groups.t));
+    }
 
     model.mode = gl.TRIANGLES;
 }
@@ -212,7 +220,7 @@ function parseModelFile (file) {
     if (textureFile != null) {
         textureFile = textureFile[1];
     } else {
-        textureFile = "default.png"
+        textureFile = "Models/xor.jpeg"
     }
     let vShaderFile = /vShader (.*\.vs)/.exec(file);
     if (vShaderFile != null) {
@@ -251,11 +259,13 @@ class Model {
             image.src = textureFile;
 
             image.onload = () => {
-                gl.bindTexture(gl.TEXTURE_2D, texture);
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-                gl.bindTexture(gl.TEXTURE_2D, null);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+                this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.MIRRORED_REPEAT);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.MIRRORED_REPEAT);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, null);
             };
 
             // Load from OBJ file, set loaded when done
