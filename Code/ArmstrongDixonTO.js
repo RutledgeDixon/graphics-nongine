@@ -9,12 +9,9 @@
  */
 
 'use strict';
-import { 
-    configureTextures, 
-} from '/graphics-functions.js';
 
 // List of all objects' associated json files
-var jsons = ["Models/Jeff.obj", "Models/monkey.obj", "Models/CG.obj"];
+var rawbjects = ["Models/jeff.jeff"];
 
 let canvas,
     //canvas_holder,
@@ -151,18 +148,17 @@ async function init() {
     startTime = new Date();
 
     // Load all objects
-    var f_offsetX = -0.6666;
     objects = [];
-    for (var i of jsons) {
+    for (var i of rawbjects) {
         objects.push(new Object(new Model(i, gl)));
         
         //f_offsetX makes sure the two objects stay separated:
-        objects[objects.length - 1].translate[0] = f_offsetX;
-        f_offsetX += 0.6666;
+        //objects[objects.length - 1].translate[0] = f_offsetX;
+        //f_offsetX += 0.6666;
     }
 
     // Write log of generated objects for troubleshooting
-    // console.log(objects);
+    console.log(objects);
 	
 	//At the start of a mouse click, save the starting positon of the objects & mouse coordinates.
 	canvas.addEventListener('mousedown', function(event) {
@@ -221,7 +217,7 @@ async function init() {
 function main() {
     /*
         gl is the GL context object
-        objects is an array of objects defined by the files specified by the jsons array at the top of this file (in order)
+        objects is an array of objects defined by the files specified by the rawbjects array at the top of this file (in order)
             each object has:
                 translate is a 3 element array containing the object's position relative to (0.0, 0.0, 0.0)
                 tint is a 3 element array containing the object's color
@@ -241,10 +237,6 @@ function main() {
             o.rotate = [0.0, time, 0.0];
         }
 	}
-    f_scaleModify *= 0.5;
-    if (objects[2].model.loaded && b_animate) {
-	    objects[2].scale = [f_scaleModify, f_scaleModify, f_scaleModify];
-    }
 }
 
 window.onload=init;

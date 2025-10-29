@@ -1,6 +1,6 @@
 // Takes gl and a list of images
 // Configures the textures from the images
-export function configureTexture(gl, images) {
+function configureTexture(gl, images) {
     let textures = [];
     images.forEach((image) => {
         let texture = gl.createTexture();       
@@ -18,23 +18,10 @@ export function configureTexture(gl, images) {
     return textures;
 }
 
-function configureTexture( image ) {
-    texture = gl.createTexture();
-    gl.bindTexture( gl.TEXTURE_2D, texture );
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, 
-         gl.RGB, gl.UNSIGNED_BYTE, image );
-    gl.generateMipmap( gl.TEXTURE_2D );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, 
-                      gl.NEAREST_MIPMAP_LINEAR );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-    
-    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
-}
 
 // Takes in vertices ([[]]) and indices ([])e
 // Calculate normals for a triangulated object
-export function calculateNormals(vertices, indices) {
+function calculateNormals(vertices, indices) {
     var normals = new Array(vertices.length);
     
     // Initialize all normals to [0, 0, 0]
@@ -95,7 +82,7 @@ export function calculateNormals(vertices, indices) {
 //take an array of 3d vertices, scale (a float), rotate (degrees, axis), and translate (length, axis)
 //scales them, rotates them, translates them, etc. using matrix multiplication
 //returns a transformation matrix
-export function calculateTransformationMatrix(gl, scale, rotate, translate) {
+function calculateTransformationMatrix(gl, scale, rotate, translate) {
     var radians = {
         x: rotate.x ? rotate.degrees.x * Math.PI / 180.0 : null,
         y: rotate.y ? rotate.degrees.y * Math.PI / 180.0 : null,
