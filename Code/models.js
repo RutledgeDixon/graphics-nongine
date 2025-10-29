@@ -201,31 +201,34 @@ function loadTrianglesJSON(model, modelInfo) {
     }
 }
 
-function parseModelFile (this, file) {
-    var objectFile = /object (.*\.(json|obj))/.exec(file);
+function parseModelFile (file) {
+    let objectFile = /object (.*\.(json|obj))/.exec(file);
     if (objectFile != null) {
         objectFile = objectFile[1];
     } else {
         objectFile = "default.obj"
     }
-    var textureFile = /texture (.*\.(png|jpg))/.exec(file);
+    let textureFile = /texture (.*\.(png|jpg))/.exec(file);
     if (textureFile != null) {
-        textureFile = objectFile[1];
+        textureFile = textureFile[1];
     } else {
         textureFile = "default.png"
     }
-    var vShaderFile = /vShader (.*\.vs)/.exec(file);
+    let vShaderFile = /vShader (.*\.vs)/.exec(file);
     if (vShaderFile != null) {
-        vShaderFile = objectFile[1];
+        vShaderFile = vShaderFile[1];
     } else {
         vShaderFile = "default.vs"
     }
-    var fShaderFile = /fShader (.*\.fs)/.exec(file);
+    let fShaderFile = /fShader (.*\.fs)/.exec(file);
     if (fShaderFile != null) {
-        fShaderFile = objectFile[1];
+        fShaderFile = fShaderFile[1];
     } else {
         fShaderFile = "default.fs"
     }
+    console.log(objectFile, textureFile, vShaderFile, fShaderFile);
+
+    return [objectFile, textureFile, vShaderFile, fShaderFile];
 }
 
 
@@ -233,17 +236,17 @@ function parseModelFile (this, file) {
 class Model {
 	width = 0.0;
 	height = 0.0;
-    constructor(fileName, gl) {
+    constructor(filename, gl) {
         // Link to GL context
         this.gl = gl;
         this.loaded = false;
-
         loadTXT(filename).then((file) => {
-            let [objectFile, textureFile, vShaderFile, fShaderFile] = parseModelFile(this, file);
+            let [objectFile, textureFile, vShaderFile, fShaderFile] = parseModelFile(file);
+            console.log(objectFile, textureFile, vShaderFile, fShaderFile);
 
             // Create a new nexture for this model
             this.texture = this.gl.createTexture();
-
+            
             var image = new Image();
             image.src = textureFile;
 
@@ -257,16 +260,16 @@ class Model {
 
             // Load from OBJ file, set loaded when done
             if (/.+\.obj$/.test(objectFile)) {
-                loadTXT(fileName).then((file) => {
+                loadTXT(objectFile).then((file) => {
                     loadTrianglesOBJ(this, file);
                     // Set the shader
                     loadShaders(this, vShaderFile, fShaderFile);
                 });
             // Load from JSON file
             } else if (/.+\.json$/.test(objectFile)) {
-                loadJSON(fileName).then((modelInfo) => {
+                loadJSON(objectFile).then((modelInfo) => {
                     loadTrianglesJSON(this, modelInfo);
-                    loadShaders(this, modelInfo.vShader, modelInfo.fShader);
+                    loadShaders(this, vShaderFile, fShaderFile);
                 });
             }
         })

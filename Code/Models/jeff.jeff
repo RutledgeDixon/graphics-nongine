@@ -1,0 +1,4 @@
+object Models/jeff.obj
+texture Models/Gamma_correction_test_picture.png
+v/Shader default.vs
+f/Shader default.fs

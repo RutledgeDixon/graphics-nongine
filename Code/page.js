@@ -1,7 +1,6 @@
 // Rutledge Dixon and Sam Armstrong
 // October 28 2025
 // Textured Objects
-import { calculateNormals } from '../code/graphics-functions.js';
 var canvas;
 var gl;
 var program;
