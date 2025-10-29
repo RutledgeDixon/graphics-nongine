@@ -54,6 +54,7 @@ function setShaders(model, fShaderSource) {
 
     // Find attribute and variable in shader, give reference index, attach as Javascript attribute to program variable
     model.program.aVertexPosition = gl.getAttribLocation(model.program, 'aVertexPosition');
+    model.program.vTexCoord = gl.getAttribLocation(model.program, 'vTexCoord');
     model.program.uTime = gl.getUniformLocation(model.program, 'uTime');
     model.program.uTranslate = gl.getUniformLocation(model.program, "uTranslate");
     model.program.uScale = gl.getUniformLocation(model.program, "uScale");
@@ -82,6 +83,15 @@ function setShaders(model, fShaderSource) {
     model.gl.bindBuffer(model.gl.ELEMENT_ARRAY_BUFFER, model.indexBuffer);
     model.gl.bufferData(model.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), model.gl.DYNAMIC_DRAW);
     
+    // Create set and assign to texture buffer
+    model.textureBuffer = model.gl.createBuffer();
+    model.gl.bindBuffer(model.gl.ARRAY_BUFFER, model.textureBuffer);
+    model.gl.bufferData(model.gl.ARRAY_BUFFER, new Float32Array(model.texCoords), model.gl.STATIC_DRAW);
+    
+    // Send texture coordinate array to vTexCoordPointer
+    model.gl.enableVertexAttribArray(model.program.vTexCoord);
+    model.gl.vertexAttribPointer(model.program.vTexCoord, 2, model.gl.FLOAT, false, 0, 0);
+
     // Unbind buffers/arrays
     model.gl.bindVertexArray(null);
     model.gl.bindBuffer(model.gl.ARRAY_BUFFER, null);
@@ -123,6 +133,7 @@ function loadTrianglesOBJ (model, file) {
         model.indices.push(parseInt(i.groups.b)-1);
         model.indices.push(parseInt(i.groups.c)-1);
     }
+    model.texCoords = [];
 
     model.mode = gl.TRIANGLES;
 }

@@ -11,7 +11,6 @@
 'use strict';
 import { 
     configureTextures, 
-    calculateTransformationMatrix 
 } from '/graphics-functions.js';
 
 // List of all objects' associated json files
@@ -26,6 +25,7 @@ let canvas,
     f_mouseX,
     f_mouseY;
 
+var texSize = 256;
 var b_mouseDragging = false;
 var a_startMouse = [0.0, 0.0];
 var a_startTranslate = [];
@@ -66,6 +66,9 @@ function draw() {
         // Set this model's program (shaders) for use
         gl.useProgram(program);
 		
+        // Configure texture
+        //configureTextures(gl, texSize, IMAGE_GOES_HERE)
+
         if (program.uTime) {
             gl.uniform1f(program.uTime, time);
         }

@@ -1,14 +1,22 @@
 #version 300 es
 precision mediump float;
 in vec3 aVertexPosition;
+attribute  vec2 vTexCoord;
 
 uniform vec3 uTranslate;
 uniform vec3 uScale;
 uniform vec3 uRotate;
 uniform float uTime;
 		
+//texture stuff
+//varying vec4 fColor;
+varying vec2 fTexCoord;
 
 void main(void) {
+	//assign texture varyings
+	//fColor = vColor;
+    fTexCoord = vTexCoord;
+
 	vec3 newPosition = (aVertexPosition);
 	newPosition *= uScale;
 	mat3 uRotX = mat3(1, 0, 0, 0, cos(uRotate.x), sin(uRotate.x), 0, -sin(uRotate.x), cos(uRotate.x));
