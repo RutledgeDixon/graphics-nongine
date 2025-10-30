@@ -77,7 +77,7 @@ function setShaders(model, fShaderSource) {
     
     // Send vertex point array to aVertexPosition attributes
     model.gl.enableVertexAttribArray(model.program.aVertexPosition);
-    model.gl.vertexAttribPointer(model.program.aVertexPointer, 4, model.gl.FLOAT, false, 0, 0);
+    model.gl.vertexAttribPointer(model.program.aVertexPointer, 3, model.gl.FLOAT, false, 0, 0);
     
     // Create set and assign to index buffer
     model.indexBuffer = model.gl.createBuffer();
@@ -121,42 +121,71 @@ function loadShaders (model, vShaderFile, fShaderFile) {
 
 // Load vertices and indices from OBJ file
 function loadTrianglesOBJ (model, file) {
-    model.vertices = [];
+    tempVertices = [];
     for (const i of file.matchAll(vRegex)) {
-        model.vertices.push(parseFloat(i.groups.x));
-        model.vertices.push(parseFloat(i.groups.y));
-        model.vertices.push(parseFloat(i.groups.z));
-        model.vertices.push(1);
+        tempVertices.push([parseFloat(i.groups.x), parseFloat(i.groups.y), parseFloat(i.groups.z)]);
     }
-    
-    var texCoords = [];
+    console.log(tempVertices);
+    var tempTexCoords = [];
     for (const i of file.matchAll(tRegex)) {
-        texCoords.push([parseFloat(i.groups.s), parseFloat(i.groups.t)]);
+        tempTexCoords.push([parseFloat(i.groups.s), parseFloat(i.groups.t)]);
     }
 
     model.indices = [];
     model.texCoords = [];
-    console.log(texCoords);
+    model.vertices = [];
+    //console.log(tempTexCoords);
+    let nextIndex = 0;
+    
+    for (const i of file.matchAll(fRegex)) {
+        // Faces are 1 indexed
+        model.vertices.push(...tempVertices[parseInt(i.groups.a1)-1]);
+        model.vertices.push(...tempVertices[parseInt(i.groups.b1)-1]);
+        model.vertices.push(...tempVertices[parseInt(i.groups.c1)-1]);
+
+        model.indices.push(nextIndex++);
+        model.indices.push(nextIndex++);
+        model.indices.push(nextIndex++);
+
+        model.texCoords.push(...tempTexCoords[parseInt(i.groups.a2)-1]);
+        model.texCoords.push(...tempTexCoords[parseInt(i.groups.b2)-1]);
+        model.texCoords.push(...tempTexCoords[parseInt(i.groups.c2)-1]);
+        
+
+    }
+    
+    /* Broken
+    model.vertices = [];
+    for (const i of file.matchAll(vRegex)) {
+        model.vertices.push(parseFloat(i.groups.x), parseFloat(i.groups.y), parseFloat(i.groups.z));
+    }
+    
+    var tempTexCoords = [];
+    for (const i of file.matchAll(tRegex)) {
+        tempTexCoords.push([parseFloat(i.groups.s), parseFloat(i.groups.t)]);
+    }
+
+    model.indices = [];
+    model.texCoords = [];
+    //console.log(tempTexCoords);
+    let nextIndex = 0;
+    
     for (const i of file.matchAll(fRegex)) {
         // Faces are 1 indexed
         model.indices.push(parseInt(i.groups.a1)-1);
         model.indices.push(parseInt(i.groups.b1)-1);
         model.indices.push(parseInt(i.groups.c1)-1);
 
-        for (const j of texCoords[parseInt(i.groups.a2)-1]) { model.texCoords.push(j); console.log(i.groups.a2, j); }
-        for (const j of texCoords[parseInt(i.groups.b2)-1]) { model.texCoords.push(j); console.log(i.groups.b2, j); }
-        for (const j of texCoords[parseInt(i.groups.c2)-1]) { model.texCoords.push(j); console.log(i.groups.c2, j); }
-        /*model.texCoords.push(texCoords[parseInt(i.groups.a2)-1][0]); 
-        model.texCoords.push(texCoords[parseInt(i.groups.b2)-1][0]); 
-        model.texCoords.push(texCoords[parseInt(i.groups.c2)-1][0]); 
-        model.texCoords.push(texCoords[parseInt(i.groups.a2)-1][1]); 
-        model.texCoords.push(texCoords[parseInt(i.groups.b2)-1][1]); 
-        model.texCoords.push(texCoords[parseInt(i.groups.c2)-1][1]); */
+        model.texCoords.push(...tempTexCoords[parseInt(i.groups.a2)-1]);
+        model.texCoords.push(...tempTexCoords[parseInt(i.groups.b2)-1]);
+        model.texCoords.push(...tempTexCoords[parseInt(i.groups.c2)-1]);
         
 
-        console.log(" ");
-    }
-    console.log(model.texCoords);
+    }*/
+
+    console.log(model.vertices);
+    //console.log(tempVertices);
+
     model.mode = gl.TRIANGLES;
 }
 
