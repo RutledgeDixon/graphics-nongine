@@ -77,12 +77,12 @@ function setShaders(model, fShaderSource) {
     
     // Send vertex point array to aVertexPosition attributes
     model.gl.enableVertexAttribArray(model.program.aVertexPosition);
-    model.gl.vertexAttribPointer(model.program.aVertexPointer, 3, model.gl.FLOAT, false, 0, 0);
+    model.gl.vertexAttribPointer(model.program.aVertexPointer, 4, model.gl.FLOAT, false, 0, 0);
     
     // Create set and assign to index buffer
     model.indexBuffer = model.gl.createBuffer();
     model.gl.bindBuffer(model.gl.ELEMENT_ARRAY_BUFFER, model.indexBuffer);
-    model.gl.bufferData(model.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), model.gl.DYNAMIC_DRAW);
+    model.gl.bufferData(model.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), model.gl.STATIC_DRAW);
     
     // Create set and assign to texture buffer
     model.textureBuffer = model.gl.createBuffer();
@@ -126,6 +126,7 @@ function loadTrianglesOBJ (model, file) {
         model.vertices.push(parseFloat(i.groups.x));
         model.vertices.push(parseFloat(i.groups.y));
         model.vertices.push(parseFloat(i.groups.z));
+        model.vertices.push(1);
     }
     
     var texCoords = [];
@@ -136,7 +137,6 @@ function loadTrianglesOBJ (model, file) {
     model.indices = [];
     model.texCoords = [];
     console.log(texCoords);
-    var temp = 0;
     for (const i of file.matchAll(fRegex)) {
         // Faces are 1 indexed
         model.indices.push(parseInt(i.groups.a1)-1);
@@ -146,8 +146,15 @@ function loadTrianglesOBJ (model, file) {
         for (const j of texCoords[parseInt(i.groups.a2)-1]) { model.texCoords.push(j); console.log(i.groups.a2, j); }
         for (const j of texCoords[parseInt(i.groups.b2)-1]) { model.texCoords.push(j); console.log(i.groups.b2, j); }
         for (const j of texCoords[parseInt(i.groups.c2)-1]) { model.texCoords.push(j); console.log(i.groups.c2, j); }
-        if (temp > 6) break;
-        temp += 1;
+        /*model.texCoords.push(texCoords[parseInt(i.groups.a2)-1][0]); 
+        model.texCoords.push(texCoords[parseInt(i.groups.b2)-1][0]); 
+        model.texCoords.push(texCoords[parseInt(i.groups.c2)-1][0]); 
+        model.texCoords.push(texCoords[parseInt(i.groups.a2)-1][1]); 
+        model.texCoords.push(texCoords[parseInt(i.groups.b2)-1][1]); 
+        model.texCoords.push(texCoords[parseInt(i.groups.c2)-1][1]); */
+        
+
+        console.log(" ");
     }
     console.log(model.texCoords);
     model.mode = gl.TRIANGLES;
@@ -251,8 +258,8 @@ class Model {
                 this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
                 this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
                 this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
-                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.MIRRORED_REPEAT);
-                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.MIRRORED_REPEAT);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+                this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
                 this.gl.bindTexture(this.gl.TEXTURE_2D, null);
             };
 

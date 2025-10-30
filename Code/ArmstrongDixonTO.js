@@ -177,6 +177,7 @@ async function init() {
             //Save the object's starting position:
             a_startTranslate.push(o.translate[0]);
             a_startTranslate.push(o.translate[1]);
+            console.log(o.model);
 		}
 	});
 

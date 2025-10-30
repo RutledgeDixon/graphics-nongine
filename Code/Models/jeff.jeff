@@ -1,5 +1,6 @@
 object Models/cube2.obj
-t/exture Models/Gamma_correction_test_picture.png
-texture xor.jpeg
+t/exture Models/TestCubeUV.png
+texture Models/Gamma_correction_test_picture.png
+t/exture xor.jpeg
 v/Shader default.vs
 f/Shader default.fs
