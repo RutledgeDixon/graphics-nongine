@@ -26,6 +26,8 @@ var globalScale = 1.0;
 var b_mouseDragging = false;
 var a_startMouse = [0.0, 0.0];
 var a_startTranslate = [];
+var a_startRotate = [];
+var dragButton = -1;
 var f_startTranslateX = 0, f_startTranslateY = 0;
 var b_animate = true;
 
@@ -171,7 +173,11 @@ async function init() {
 	
 	//At the start of a mouse click, save the starting positon of the objects & mouse coordinates.
 	canvas.addEventListener('mousedown', function(event) {
+        if (event.button === 2) {
+            event.preventDefault();
+        }
         b_mouseDragging = true;
+        dragButton = event.button;
 
         //Save the mouse's start position:
         a_startMouse[0] = f_mouseX;
@@ -181,6 +187,8 @@ async function init() {
             //Save the object's starting position:
             a_startTranslate.push(o.translate[0]);
             a_startTranslate.push(o.translate[1]);
+            a_startRotate.push(o.rotate[0]);
+            a_startRotate.push(o.rotate[1]);
 		}
 	});
 
@@ -196,6 +204,9 @@ async function init() {
         
         //While the mouse click is held, use the saved starting positions to drag the objects on screen:
         if (b_mouseDragging){   
+            if (dragButton === 2) {
+                event.preventDefault();
+            }
             
             var int_i = 0;
             for (var o of objects) {
@@ -204,8 +215,14 @@ async function init() {
                 const dy = f_mouseY - a_startMouse[1];
 
                 //Apply offset relative to the original position
-                o.translate[0] = a_startTranslate[int_i] + dx;
-                o.translate[1] = a_startTranslate[int_i + 1] + dy;
+                if (dragButton === 2) {
+                    o.translate[0] = a_startTranslate[int_i] + dx;
+                    o.translate[1] = a_startTranslate[int_i + 1] + dy;
+                } else if (dragButton === 0) {
+                    o.rotate[0] = a_startRotate[int_i] - 3*dy;
+                    o.rotate[1] = a_startRotate[int_i + 1] + 3*dx;
+                }
+                
 
                 int_i += 2;
             }
@@ -216,6 +233,13 @@ async function init() {
     canvas.addEventListener('mouseup', function(event) {
         b_mouseDragging = false;
         a_startTranslate = [];
+        a_startRotate = [];
+        dragButton = -1;
+    });
+
+    // Prevent right-click context menu on canvas
+    canvas.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
     });
 
     //handle scroll wheel for zooming in or out:
@@ -260,10 +284,10 @@ function main() {
         //As time goes by, the scale of the models smoothly grows, then shrinks, then grows again in a cycle.
         o.scale = [scale, scale, scale];
         //o.scale = [1,1,1];
-        if (o.model.loaded && b_animate) {
-            //o.scale = [f_scaleModify, f_scaleModify, f_scaleModify];
-            o.rotate = [time/4, time, time*2/3];
-        }
+        // if (o.model.loaded && b_animate) {
+        //     //o.scale = [f_scaleModify, f_scaleModify, f_scaleModify];
+        //     o.rotate = [time/4, time, time*2/3];
+        // }
 
         //apply global scale to objects:
         o.scale[0] *= globalScale;
