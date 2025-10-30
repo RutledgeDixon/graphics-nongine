@@ -11,7 +11,7 @@
 'use strict';
 
 // List of all objects' associated json files
-var rawbjects = ["Models/jeff.jeff", "Models/cube.cube", "Models/missile.missile"];
+var rawbjects = ["Models/cube.cube", "Models/missile.missile"];
 
 let canvas,
     //canvas_holder,
@@ -273,7 +273,7 @@ function main() {
 
     //SCALE MISSILE WAY WAY DOWN
     scale = 0.009;
-    objects[2].scale = [scale * globalScale, scale * globalScale, scale * globalScale];
+    objects[1].scale = [scale * globalScale, scale * globalScale, scale * globalScale];
 
 }
 
