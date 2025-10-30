@@ -1,0 +1,4 @@
+object Models/BCube.obj
+texture Models/TestCubeUV.png
+v/Shader default.vs
+f/Shader default.fs

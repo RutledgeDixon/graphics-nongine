@@ -11,7 +11,7 @@
 'use strict';
 
 // List of all objects' associated json files
-var rawbjects = ["Models/jeff.jeff", "Models/cube.cube"];
+var rawbjects = ["Models/jeff.jeff", "Models/cube.cube", "Models/bcube.bcube"];
 
 let canvas,
     //canvas_holder,

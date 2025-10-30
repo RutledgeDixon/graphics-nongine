@@ -153,9 +153,23 @@ function loadTrianglesOBJ (model, file) {
 
     //vertices can be shared but have different UVs in the .obj file.
     //This adds a new vertex/uv pair only when a new combination is found
+    console.log("lengths", tempTexCoords.length, tempVertices.length);
+    console.log("testing", tempTexCoords[27824], tempTexCoords[27825], tempTexCoords[27826]);
+    console.log("testing", tempTexCoords[27824], tempTexCoords[27825], tempTexCoords[27826]);
+    
     for (const i of file.matchAll(fRegex)) {
         let faceVerts = [i.groups.a, i.groups.b, i.groups.c];
         for (let fv of faceVerts) {
+            let parts = fv.split('/');
+            model.vertices.push(...tempVertices[parseInt(parts[0])-1]);
+            if (parseInt(parts[1])-1 < tempTexCoords.length) { 
+                model.texCoords.push(...tempTexCoords[parseInt(parts[1])-1]) 
+            } else { 
+                model.texCoords.push(0, 0) 
+            };
+            model.indices.push(nextIndex);
+            nextIndex++;
+            /*
             let parts = fv.split('/');
             let vIdx = parseInt(parts[0]) - 1;
             let tIdx = (parts.length > 1 && parts[1] !== '') ? parseInt(parts[1]) - 1 : null;
@@ -174,6 +188,7 @@ function loadTrianglesOBJ (model, file) {
             } else {
                 model.indices.push(vertMap.get(key));
             }
+                */
         }
     }
     model.mode = gl.TRIANGLES;
