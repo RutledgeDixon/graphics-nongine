@@ -1,0 +1,4 @@
+object Models/missile.obj
+texture Models/missile.png
+v/Shader default.vs
+f/Shader default.fs

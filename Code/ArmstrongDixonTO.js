@@ -11,7 +11,7 @@
 'use strict';
 
 // List of all objects' associated json files
-var rawbjects = ["Models/jeff.jeff", "Models/cube.cube"];
+var rawbjects = ["Models/jeff.jeff", "Models/cube.cube", "Models/missile.missile"];
 
 let canvas,
     //canvas_holder,
@@ -155,7 +155,7 @@ async function init() {
     // Get the time the page was loaded
     startTime = new Date();
 
-    var f_offsetX = -0.5 * rawbjects.length / 2;
+    var f_offsetX = -0.3 * rawbjects.length / 2;
     // Load all objects
     objects = [];
     for (var i of rawbjects) {
@@ -163,7 +163,7 @@ async function init() {
         
         //f_offsetX makes sure the two objects stay separated:
         objects[objects.length - 1].translate[0] = f_offsetX;
-        f_offsetX += 0.6666;
+        f_offsetX += 0.3 * rawbjects.length / 2;
     }
 
     // Write log of generated objects for troubleshooting
@@ -270,7 +270,11 @@ function main() {
         o.scale[1] *= globalScale;
         o.scale[2] *= globalScale;
 	}
-    
+
+    //SCALE MISSILE WAY WAY DOWN
+    scale = 0.009;
+    objects[2].scale = [scale * globalScale, scale * globalScale, scale * globalScale];
+
 }
 
 window.onload=init;

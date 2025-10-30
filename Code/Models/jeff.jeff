@@ -1,4 +1,4 @@
 object Models/jeff.obj
-texture Models/gamma.png
+texture Models/water.jpg
 v/Shader default.vs
 f/Shader default.fs
