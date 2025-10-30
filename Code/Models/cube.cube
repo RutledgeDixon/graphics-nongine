@@ -1,0 +1,4 @@
+object Models/cube2.obj
+texture Models/xor.jpeg
+v/Shader default.vs
+f/Shader default.fs

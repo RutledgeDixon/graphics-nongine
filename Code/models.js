@@ -124,59 +124,58 @@ function loadShaders (model, vShaderFile, fShaderFile) {
 // Load vertices and indices from OBJ file
 function loadTrianglesOBJ (model, file) {
     // Parse vertices
-    model.vertices = [];
+    let tempVertices = [];
     for (const i of file.matchAll(vRegex)) {
-        model.vertices.push(parseFloat(i.groups.x));
-        model.vertices.push(parseFloat(i.groups.y));
-        model.vertices.push(parseFloat(i.groups.z));
+        tempVertices.push([
+            parseFloat(i.groups.x),
+            parseFloat(i.groups.y),
+            parseFloat(i.groups.z)
+        ]);
     }
 
     // Parse texture coordinates from file
-    let objTextureCoords = [];
+    let tempTexCoords = [];
     for (const i of file.matchAll(tRegex)) {
-        objTextureCoords.push(parseFloat(i.groups.s));
-        objTextureCoords.push(parseFloat(i.groups.t));
+        tempTexCoords.push([
+            parseFloat(i.groups.s),
+            parseFloat(i.groups.t)
+        ]);
     }
 
-    // Initialize arrays
+    // Build final arrays
+    model.vertices = [];
+    model.texCoords = [];
     model.indices = [];
-    let vertexCount = model.vertices.length / 3;
-    
-    // Create texture coordinate array that matches vertex array size
-    model.texCoords = new Array(vertexCount * 2).fill(0.0);
-    
-    // Parse faces and build proper texture coordinate mapping
+
+    // Map of unique vertex/uv pairs to index
+    let vertMap = new Map();
+    let nextIndex = 0;
+
+    //vertices can be shared but have different UVs in the .obj file.
+    //This adds a new vertex/uv pair only when a new combination is found
     for (const i of file.matchAll(fRegex)) {
-        // Parse face format: vertex/texture/normal
-        let aParts = i.groups.a.split('/');
-        let bParts = i.groups.b.split('/');
-        let cParts = i.groups.c.split('/');
-        
-        // Vertex indices (1-indexed in OBJ, convert to 0-indexed)
-        let aVertIndex = parseInt(aParts[0]) - 1;
-        let bVertIndex = parseInt(bParts[0]) - 1;
-        let cVertIndex = parseInt(cParts[0]) - 1;
-        
-        model.indices.push(aVertIndex);
-        model.indices.push(bVertIndex);
-        model.indices.push(cVertIndex);
-        
-        // Map texture coordinates to vertices
-        if (aParts.length > 1 && aParts[1] !== '' && objTextureCoords.length > 0) {
-            let aTexIndex = parseInt(aParts[1]) - 1;
-            let bTexIndex = parseInt(bParts[1]) - 1;
-            let cTexIndex = parseInt(cParts[1]) - 1;
-            
-            // Assign texture coordinates to the correct vertex positions
-            model.texCoords[aVertIndex * 2] = objTextureCoords[aTexIndex * 2];
-            model.texCoords[aVertIndex * 2 + 1] = objTextureCoords[aTexIndex * 2 + 1];
-            model.texCoords[bVertIndex * 2] = objTextureCoords[bTexIndex * 2];
-            model.texCoords[bVertIndex * 2 + 1] = objTextureCoords[bTexIndex * 2 + 1];
-            model.texCoords[cVertIndex * 2] = objTextureCoords[cTexIndex * 2];
-            model.texCoords[cVertIndex * 2 + 1] = objTextureCoords[cTexIndex * 2 + 1];
+        let faceVerts = [i.groups.a, i.groups.b, i.groups.c];
+        for (let fv of faceVerts) {
+            let parts = fv.split('/');
+            let vIdx = parseInt(parts[0]) - 1;
+            let tIdx = (parts.length > 1 && parts[1] !== '') ? parseInt(parts[1]) - 1 : null;
+            let key = `${vIdx}_${tIdx}`;
+            if (!vertMap.has(key)) {
+                // Add new vertex/uv pair
+                model.vertices.push(...tempVertices[vIdx]);
+                if (tIdx !== null && tempTexCoords[tIdx]) {
+                    model.texCoords.push(...tempTexCoords[tIdx]);
+                } else {
+                    model.texCoords.push(0.0, 0.0);
+                }
+                vertMap.set(key, nextIndex);
+                model.indices.push(nextIndex);
+                nextIndex++;
+            } else {
+                model.indices.push(vertMap.get(key));
+            }
         }
     }
-
     model.mode = gl.TRIANGLES;
 }
 

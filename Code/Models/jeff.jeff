@@ -1,4 +1,4 @@
-object Models/cube2.obj
-texture Models/xor.jpeg
+object Models/jeff.obj
+texture Models/gamma.png
 v/Shader default.vs
 f/Shader default.fs

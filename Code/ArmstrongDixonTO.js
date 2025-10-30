@@ -11,7 +11,7 @@
 'use strict';
 
 // List of all objects' associated json files
-var rawbjects = ["Models/jeff.jeff"];
+var rawbjects = ["Models/jeff.jeff", "Models/cube.cube"];
 
 let canvas,
     //canvas_holder,
@@ -22,6 +22,7 @@ let canvas,
     f_mouseX,
     f_mouseY;
 
+var globalScale = 1.0;
 var b_mouseDragging = false;
 var a_startMouse = [0.0, 0.0];
 var a_startTranslate = [];
@@ -154,14 +155,15 @@ async function init() {
     // Get the time the page was loaded
     startTime = new Date();
 
+    var f_offsetX = -0.5 * rawbjects.length / 2;
     // Load all objects
     objects = [];
     for (var i of rawbjects) {
         objects.push(new Object(new Model(i, gl)));
         
         //f_offsetX makes sure the two objects stay separated:
-        //objects[objects.length - 1].translate[0] = f_offsetX;
-        //f_offsetX += 0.6666;
+        objects[objects.length - 1].translate[0] = f_offsetX;
+        f_offsetX += 0.6666;
     }
 
     // Write log of generated objects for troubleshooting
@@ -215,6 +217,16 @@ async function init() {
         b_mouseDragging = false;
         a_startTranslate = [];
     });
+
+    //handle scroll wheel for zooming in or out:
+    canvas.addEventListener('wheel', function(event) {
+        //Get amount of scroll:
+        const delta = Math.sign(event.deltaY);
+        //adjust globalScaled based on the direction of the mouse scroll:
+        globalScale *= (1 - 0.1 * delta);
+        //Clamp globalScale to a min and max:
+        globalScale = Math.min(Math.max(globalScale, 0.1), 5.0);
+    })
 	
     // Begin rendering
     render(gl, objects, startTime);
@@ -231,7 +243,13 @@ function main() {
                 model contains the WebGL information for the object
         time is the time since the start of the program
     */
-	
+
+        
+	//FOR TESTING
+    //scale down the cube
+    //objects[1].scale = [0.2, 0.2, 0.2];
+
+
     let f_scaleModify = 1 + Math.sin(time) / 1.5;
 	for (var o of objects) {
 		//o.tint[0] = Math.abs(Math.cos(time/10.0));
@@ -246,7 +264,13 @@ function main() {
             //o.scale = [f_scaleModify, f_scaleModify, f_scaleModify];
             o.rotate = [time/4, time, time*2/3];
         }
+
+        //apply global scale to objects:
+        o.scale[0] *= globalScale;
+        o.scale[1] *= globalScale;
+        o.scale[2] *= globalScale;
 	}
+    
 }
 
 window.onload=init;
