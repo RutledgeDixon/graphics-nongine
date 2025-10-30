@@ -157,7 +157,7 @@ async function init() {
     // Get the time the page was loaded
     startTime = new Date();
 
-    var f_offsetX = -0.3 * rawbjects.length / 2;
+    var f_offsetX = -1 + 2/(rawbjects.length + 1);
     // Load all objects
     objects = [];
     for (var i of rawbjects) {
@@ -165,7 +165,7 @@ async function init() {
         
         //f_offsetX makes sure the two objects stay separated:
         objects[objects.length - 1].translate[0] = f_offsetX;
-        f_offsetX += 0.3 * rawbjects.length / 2;
+        f_offsetX += 2/(rawbjects.length + 1);
     }
 
     // Write log of generated objects for troubleshooting
@@ -268,18 +268,12 @@ function main() {
         time is the time since the start of the program
     */
 
-        
-	//FOR TESTING
-    //scale down the cube
-    //objects[1].scale = [0.2, 0.2, 0.2];
-
-
-    let f_scaleModify = 1 + Math.sin(time) / 1.5;
+    //let f_scaleModify = 1 + Math.sin(time) / 1.5;
 	for (var o of objects) {
 		//o.tint[0] = Math.abs(Math.cos(time/10.0));
 		//o.tint[1] = Math.abs(Math.cos(time/9.0 + 10));
 		//o.tint[2] = Math.abs(Math.cos(time/8.0 + 20));
-        var scale = 0.5;
+        var scale = 0.6;
         o.tint = [1,1,1];
         //As time goes by, the scale of the models smoothly grows, then shrinks, then grows again in a cycle.
         o.scale = [scale, scale, scale];
